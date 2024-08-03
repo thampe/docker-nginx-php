@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "7.2", "7.3", "7.4", "8.1" ]
+    branches: ["8.3" ]
   pull_request:
-    branches: [ "7.2", "7.3", "7.4", "8.1" ]
+    branches: ["8.3" ]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -41,4 +41,4 @@ jobs:
         with:
           pull: true
           push: true
-          tags: phoenixmedia/nginx-php:${{ steps.extract_branch.outputs.branch }}
+          tags: thampe/nginx-php:${{ steps.extract_branch.outputs.branch }}
