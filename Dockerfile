@@ -1,20 +1,11 @@
 FROM alpine:3.19
 
-# An (optional) host that relays your msgs
-ENV RELAYHOST=
-# An (optional) username for the relay server
-ENV RELAYHOST_USERNAME=
-# An (optional) login password for the relay server
-ENV RELAYHOST_PASSWORD=
+RUN printf "https://dl-cdn.alpinelinux.org/alpine/edge/main\nhttps://dl-cdn.alpinelinux.org/alpine/edge/community\nhttps://dl-cdn.alpinelinux.org/alpine/edge/testing\n" > /etc/apk/repositories
 
-# (optional) Should the postfix relay use TLS
-ENV SMTP_USE_TLS=
+# update apk repositories & upgrade all
+RUN apk update && apk upgrade
 
-# Fixes an bug with iconv @see https://github.com/docker-library/php/issues/240
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv==1.15-r3
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-RUN apk --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ add \
+RUN apk --no-cache add \
         ca-certificates \
         gettext \
         bash \
@@ -26,54 +17,50 @@ RUN apk --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testin
         libmcrypt \
         nginx \
         supervisor \
-        postfix \
         unzip \
-        php82 \
-        php82-bcmath \
-        php82-ctype \
-        php82-curl \
-        php82-dom \
-        php82-fpm \
-        php82-fileinfo \
-        php82-gd \
-        php82-iconv \
-        php82-intl \
-        php82-json \
-        php82-mbstring \
-        php82-common \
-        php82-mysqlnd \
-        php82-opcache \
-        php82-openssl \
-        php82-pcntl \
-        php82-pecl-apcu \
-        php82-pecl-lzf \
-        php82-pecl-zstd \
-        php82-pdo \
-        php82-pdo_mysql \
-        php82-phar \
-        php82-posix \
-        php82-redis \
-        php82-session \
-        php82-simplexml \
-        php82-soap \
-        php82-sodium \
-        php82-sockets \
-        php82-tokenizer \
-        php82-xml \
-        php82-xmlreader \
-        php82-xmlwriter \
-        php82-xsl \
-        php82-zip \
-        && addgroup nginx postdrop && postalias /etc/postfix/aliases && mkdir /var/log/postfix \
+        php83 \
+        php83-bcmath \
+        php83-ctype \
+        php83-curl \
+        php83-dom \
+        php83-fpm \
+        php83-fileinfo \
+        php83-gd \
+        php83-iconv \
+        php83-intl \
+        php83-json \
+        php83-mbstring \
+        php83-common \
+        php83-mysqlnd \
+        php83-opcache \
+        php83-openssl \
+        php83-pcntl \
+        php83-pecl-apcu \
+        php83-pecl-lzf \
+        php83-pecl-zstd \
+        php83-pdo \
+        php83-pdo_mysql \
+        php83-phar \
+        php83-posix \
+        php83-redis \
+        php83-session \
+        php83-simplexml \
+        php83-soap \
+        php83-sodium \
+        php83-sockets \
+        php83-tokenizer \
+        php83-xml \
+        php83-xmlreader \
+        php83-xmlwriter \
+        php83-xsl \
+        php83-zip \
         && sed -i '/Include files with config snippets into the root context/,+1d' /etc/nginx/nginx.conf \
         && sed -ie "s#include /etc/nginx/http.d/#include /etc/nginx/conf.d/#g" /etc/nginx/nginx.conf \
-        && postconf "smtputf8_enable = no" && postconf "maillog_file=/var/log/postfix/mail.log" \
         && mkdir /var/www/html && chown nginx:nginx /var/www/html \
         && ln -sf /dev/stdout /var/log/nginx/access.log \
         && ln -sf /dev/stderr /var/log/nginx/error.log
 
-
-COPY conf/www.conf /etc/php82/php-fpm.d/www.conf
+COPY conf/www.conf /etc/php83/php-fpm.d/www.conf
 COPY conf/default.conf conf/healthz.conf /etc/nginx/conf.d/
 COPY healthz /var/www/healthz
 COPY bin/setup.sh /setup.sh
@@ -86,4 +73,3 @@ EXPOSE 80
 WORKDIR /var/www/html
 
 CMD ["/run.sh"]
-

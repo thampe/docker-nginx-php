@@ -14,35 +14,6 @@ fi
 
 
 echo -e "******************************"
-echo -e "******* POSTFIX SETUP ********"
-echo -e "******************************"
-
-# Set up a relay host, if needed
-if [ ! -z "$RELAYHOST" ]; then
-	echo -e "Forwarding all emails to $RELAYHOST"
-	postconf -e "relayhost=$RELAYHOST"
-
-	if [ -n "$RELAYHOST_USERNAME" ] && [ -n "$RELAYHOST_PASSWORD" ]; then
-		echo -e "using username $RELAYHOST_USERNAME and password."
-		echo "$RELAYHOST $RELAYHOST_USERNAME:$RELAYHOST_PASSWORD" >> /etc/postfix/sasl_passwd
-
-		postmap hash:/etc/postfix/sasl_passwd
-		postconf -e "smtp_sasl_auth_enable=yes"
-		postconf -e "smtp_sasl_password_maps=lmdb:/etc/postfix/sasl_passwd"
-		postconf -e "smtp_sasl_security_options=noanonymous"
-	else
-		echo -e "without any authentication. Make sure your server is configured to accept emails coming from this IP."
-	fi
-fi
-
-# Activate TLS usage
-if [ ! -z "$SMTP_USE_TLS" ]; then
-	postconf -e "smtp_use_tls=yes"
-	postconf -e "smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt"
-fi
-
-
-echo -e "******************************"
 echo -e "******* PHP SETUP ************"
 echo -e "******************************"
 
@@ -51,11 +22,11 @@ echo -e "******************************"
 [[ -z "$XDEBUG_REMOTE_HOST" ]] && XDEBUG_REMOTE_HOST="$VM_HOST_IP"
 [[ -z "$XDEBUG_IDE_KEY" ]] && XDEBUG_IDE_KEY="mykey"
 if [ ! -z "$XDEBUG_INSTALL" ] && [ ! -f /.deployed_xdebug ]; then
-    if [ ! -f /etc/php82/conf.d/50_xdebug.ini ]; then
-        echo -e "zend_extension=xdebug.so\nxdebug.mode=debug,profile\nxdebug.client_host=$XDEBUG_REMOTE_HOST\nxdebug.client_port=9000\nxdebug.start_with_request=trigger\nxdebug.output_dir=/var/www/html/var\nxdebug.max_nesting_level=500\n" > /etc/php82/conf.d/50_xdebug.ini
+    if [ ! -f /etc/php83/conf.d/50_xdebug.ini ]; then
+        echo -e "zend_extension=xdebug.so\nxdebug.mode=debug,profile\nxdebug.client_host=$XDEBUG_REMOTE_HOST\nxdebug.client_port=9000\nxdebug.start_with_request=trigger\nxdebug.output_dir=/var/www/html/var\nxdebug.max_nesting_level=500\n" > /etc/php83/conf.d/50_xdebug.ini
         echo -e "export export XDEBUG_SESSION=\"$XDEBUG_IDE_KEY\"" >> /root/.bashrc
     fi
-    apk --no-cache add php82-xdebug
+    apk --no-cache add php83-xdebug
     touch /.deployed_xdebug
 fi
 
