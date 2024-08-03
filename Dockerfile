@@ -5,7 +5,14 @@ RUN printf "https://dl-cdn.alpinelinux.org/alpine/edge/main\nhttps://dl-cdn.alpi
 # update apk repositories & upgrade all
 RUN apk update && apk upgrade
 
-RUN apk --no-cache add \
+ARG UID=101
+ARG GID=101
+
+RUN  set -x \
+# create nginx user/group first, to be consistent throughout docker variants
+    && addgroup -g $GID -S nginx \
+    && adduser -S -D -H -u $UID -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
+    && apk --no-cache add \
         ca-certificates \
         gettext \
         bash \
@@ -54,11 +61,11 @@ RUN apk --no-cache add \
         php83-xmlwriter \
         php83-xsl \
         php83-zip \
-        && sed -i '/Include files with config snippets into the root context/,+1d' /etc/nginx/nginx.conf \
-        && sed -ie "s#include /etc/nginx/http.d/#include /etc/nginx/conf.d/#g" /etc/nginx/nginx.conf \
-        && mkdir /var/www/html && chown nginx:nginx /var/www/html \
-        && ln -sf /dev/stdout /var/log/nginx/access.log \
-        && ln -sf /dev/stderr /var/log/nginx/error.log
+    && sed -i '/Include files with config snippets into the root context/,+1d' /etc/nginx/nginx.conf \
+    && sed -ie "s#include /etc/nginx/http.d/#include /etc/nginx/conf.d/#g" /etc/nginx/nginx.conf \
+    && mkdir /var/www/html && chown nginx:nginx /var/www/html \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY conf/www.conf /etc/php83/php-fpm.d/www.conf
 COPY conf/default.conf conf/healthz.conf /etc/nginx/conf.d/
