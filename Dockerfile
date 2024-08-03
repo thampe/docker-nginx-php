@@ -5,8 +5,8 @@ RUN printf "https://dl-cdn.alpinelinux.org/alpine/edge/main\nhttps://dl-cdn.alpi
 # update apk repositories & upgrade all
 RUN apk update && apk upgrade
 
-ARG UID=101
-ARG GID=101
+ARG UID=1001
+ARG GID=1001
 
 RUN  set -x \
 # create nginx user/group first, to be consistent throughout docker variants
