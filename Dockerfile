@@ -24,6 +24,7 @@ RUN  set -x \
         libmcrypt \
         nginx \
         supervisor \
+        shadow \
         unzip \
         php83 \
         php83-bcmath \
@@ -73,7 +74,7 @@ COPY healthz /var/www/healthz
 COPY bin/setup.sh /setup.sh
 COPY bin/run.sh /run.sh
 COPY conf/supervisord.conf /etc/supervisord.conf
-COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 EXPOSE 80
 
