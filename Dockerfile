@@ -26,6 +26,7 @@ RUN  set -x \
         supervisor \
         shadow \
         unzip \
+        patch \
         php83 \
         php83-bcmath \
         php83-ctype \
