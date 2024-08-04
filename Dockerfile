@@ -27,6 +27,7 @@ RUN  set -x \
         shadow \
         unzip \
         patch \
+        nodejs \
         php83 \
         php83-bcmath \
         php83-ctype \
