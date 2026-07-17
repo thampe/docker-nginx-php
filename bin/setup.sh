@@ -22,19 +22,19 @@ echo -e "******************************"
 [[ -z "$XDEBUG_REMOTE_HOST" ]] && XDEBUG_REMOTE_HOST="$VM_HOST_IP"
 [[ -z "$XDEBUG_IDE_KEY" ]] && XDEBUG_IDE_KEY="mykey"
 if [ ! -z "$XDEBUG_INSTALL" ] && [ ! -f /.deployed_xdebug ]; then
-    if [ ! -f /etc/php83/conf.d/50_xdebug.ini ]; then
-        echo -e "zend_extension=xdebug.so\nxdebug.mode=debug,profile\nxdebug.client_host=$XDEBUG_REMOTE_HOST\nxdebug.client_port=9000\nxdebug.start_with_request=trigger\nxdebug.output_dir=/var/www/html/var\nxdebug.max_nesting_level=500\n" > /etc/php83/conf.d/50_xdebug.ini
+    if [ ! -f /etc/php85/conf.d/50_xdebug.ini ]; then
+        echo -e "zend_extension=xdebug.so\nxdebug.mode=debug,profile\nxdebug.client_host=$XDEBUG_REMOTE_HOST\nxdebug.client_port=9000\nxdebug.start_with_request=trigger\nxdebug.output_dir=/var/www/html/var\nxdebug.max_nesting_level=500\n" > /etc/php85/conf.d/50_xdebug.ini
         echo -e "export export XDEBUG_SESSION=\"$XDEBUG_IDE_KEY\"" >> /root/.bashrc
     fi
-    apk --no-cache add php83-xdebug
+    apk --no-cache add php85-pecl-xdebug
     touch /.deployed_xdebug
 fi
 
 # Set "from" Email-Address
 if [ ! -z "$MAILFROM" ]; then
     echo -e "using email-address $MAILFROM to send the emails"
-    sed -i "s/^sendmail_path.*/sendmail_path = sendmail -t -i -f '${MAILFROM}'/g" /etc/php7/php.ini
-    sed -i "s/^mail.force_extra_parameters.*/mail.force_extra_parameters = \"-f ${MAILFROM}\"/g" /etc/php7/php.ini
+    sed -i "s/^sendmail_path.*/sendmail_path = sendmail -t -i -f '${MAILFROM}'/g" /etc/php85/php.ini
+    sed -i "s/^mail.force_extra_parameters.*/mail.force_extra_parameters = \"-f ${MAILFROM}\"/g" /etc/php85/php.ini
 fi
 
 # Bash prompt configuration
